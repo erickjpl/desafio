@@ -36,7 +36,7 @@ class PublicationRepository
             if ($relations) 
                 $query = $this->relations($query);
             
-            return $this->transform($query->get($columns));
+            return $this->transform($query->get($columns), $relations);
         } catch(\Exception $e) {
             throw $e;
         }
@@ -89,7 +89,7 @@ class PublicationRepository
         return $query->with('comments');
     }
 
-    public function transform($query)
+    public function transform($query, $relations)
     {
         if( is_countable($query) ) {
             $users = collect();
@@ -103,6 +103,10 @@ class PublicationRepository
             }
         } else {
             $entity = new PublicationEntity($query);
+
+            if ($relations) 
+                $entity->setPublications($value->comments);
+                
             return $entity->toResponse();
         }
 

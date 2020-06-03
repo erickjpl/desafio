@@ -2,21 +2,20 @@
 
 namespace App\Http\Data;
 
-use App\User;
-use App\Http\Object\UserEntity;
-use App\Http\Object\PublicationEntity;
+use App\Comment;
+use App\Http\Object\CommentEntity;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Container\Container as Application;
 
-class UserRepository
+class CommentRepository
 {
     protected $model;
 
-    protected $fieldSearchable = [ 'id', 'name', 'lastname', 'email' ];
+    protected $fieldSearchable = [ 'id', 'content', 'status', 'publication_id' ];
 
     public function __construct( Application $app )
     {
-        $this->model = $app->make( User::class );
+        $this->model = $app->make( Comment::class );
     }
 
     public function all($search = [], $limit = null, $relations = false, $columns = ['*'])
@@ -87,7 +86,7 @@ class UserRepository
 
     public function relations($query)
     {
-        return $query->with('publications');
+        return $query->with('publication');
     }
 
     public function transform($query, $relations)
@@ -95,19 +94,19 @@ class UserRepository
         if( is_countable($query) ) {
             $users = collect();
             foreach ($query as $value) {
-                $entity = new UserEntity($value);
+                $entity = new CommentEntity($value);
 
                 if ($relations) 
-                    $entity->setPublications($value->publications);
+                    $entity->setPublication($value->publication);
 
                 $users->push($entity->toResponse());
             }
         } else {
-            $entity = new UserEntity($query);
+            $entity = new CommentEntity($query);
 
             if ($relations) 
-                $entity->setPublications($value->publications);
-                
+                    $entity->setPublication($value->publication);
+
             return $entity->toResponse();
         }
 

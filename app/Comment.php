@@ -4,9 +4,9 @@ namespace App;
 
 use Illuminate\Database\Eloquent\Model;
 
-class Publication extends Model
+class Comment extends Model
 {
-    public $table = 'publications';
+    public $table = 'comments';
     
     const CREATED_AT = 'created_at';
     const UPDATED_AT = 'updated_at';
@@ -17,7 +17,7 @@ class Publication extends Model
      * @var array
      */
     protected $fillable = [
-        'title', 'content',
+        'content', 'status',
     ];
 
     /**
@@ -27,9 +27,9 @@ class Publication extends Model
      */
     protected $casts = [
         'id' => 'integer',
-        'title' => 'string',
         'content' => 'string',
-        'comment_id' => 'integer'
+        'status' => 'string',
+        'publication_id' => 'integer'
     ];
     
     /**
@@ -43,10 +43,11 @@ class Publication extends Model
    }
 
     /**
-     * @return \Illuminate\Database\Eloquent\Relations\HasMany
+     * @return \Illuminate\Database\Eloquent\Relations\BelongsTo
      **/
-    public function comments()
+    public function publication()
     {
-        return $this->hasMany(\App\Comment::class, 'publication_id');
+        return $this->belongsTo(\App\Publication::class, 'publication_id')
+            ->withDefault([ 'comments' => 'The comments are empty.' ]);
     }
 }
