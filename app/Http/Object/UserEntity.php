@@ -3,6 +3,7 @@
 namespace App\Http\Object;
 
 use App\User;
+use App\Publication;
 use \Illuminate\Http\Response;
 
 class UserEntity
@@ -13,14 +14,17 @@ class UserEntity
     private $full_name;
     private $email;
     private $password;
+    private $relation_publications;
 
     public function __construct(User $user)
     {
-        $this->id = $user->id;
-        $this->name = $user->name;
+        $this->id        = $user->id;
+        $this->name      = $user->name;
         $this->lastname  = $user->lastname;
-        $this->full_name  = $user->full_name;
-        $this->email  = $user->email;
+        $this->full_name = $user->full_name;
+        $this->email     = $user->email;
+
+        $this->relation_publications = collect();
     }
 
     public function getId()
@@ -57,12 +61,33 @@ class UserEntity
         $this->password = $password;
     }
 
+    public function addPublication(Publication $publication)
+    {
+        if( ! $this->relation_publications->contains($publication) ) {
+            $this->relation_publications->add($publication);
+        }
+    }
+
+    public function setPublications($publications) {
+        $this->relation_publications = $publications;
+    }
+
+    public function getPublications()
+    {
+        return $this->relation_publications;
+    }
+
     public function toResponse()
     {
-        return array(
-            'id'        => $this->getId(),
-            'full_name' => $this->getFullName(),
-            'email'     => $this->getEmail()
+        $response = array(
+            'id'           => $this->getId(),
+            'full_name'    => $this->getFullName(),
+            'email'        => $this->getEmail(),
         );
+
+        if ( $this->getPublications()->isNotEmpty() )
+            $response['publications'] = $this->getPublications();
+
+        return $response;
     }
 }

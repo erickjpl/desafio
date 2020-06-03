@@ -2,21 +2,20 @@
 
 namespace App\Http\Data;
 
-use App\User;
-use App\Http\Object\UserEntity;
+use App\Publication;
 use App\Http\Object\PublicationEntity;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Container\Container as Application;
 
-class UserRepository
+class PublicationRepository
 {
     protected $model;
 
-    protected $fieldSearchable = [ 'id', 'name', 'lastname', 'email' ];
+    protected $fieldSearchable = [ 'id', 'title', 'content', 'user_id' ];
 
     public function __construct( Application $app )
     {
-        $this->model = $app->make( User::class );
+        $this->model = $app->make( Publication::class );
     }
 
     public function all($search = [], $limit = null, $relations = false, $columns = ['*'])
@@ -37,7 +36,7 @@ class UserRepository
             if ($relations) 
                 $query = $this->relations($query);
             
-            return $this->transform($query->get($columns), $relations);
+            return $this->transform($query->get($columns));
         } catch(\Exception $e) {
             throw $e;
         }
@@ -87,23 +86,23 @@ class UserRepository
 
     public function relations($query)
     {
-        return $query->with('publications');
+        return $query->with('comments');
     }
 
-    public function transform($query, $relations)
+    public function transform($query)
     {
         if( is_countable($query) ) {
             $users = collect();
             foreach ($query as $value) {
-                $entity = new UserEntity($value);
+                $entity = new PublicationEntity($value);
 
                 if ($relations) 
-                    $entity->setPublications($value->publications);
+                    $entity->setPublications($value->comments);
 
                 $users->push($entity->toResponse());
             }
         } else {
-            $entity = new UserEntity($query);
+            $entity = new PublicationEntity($query);
             return $entity->toResponse();
         }
 

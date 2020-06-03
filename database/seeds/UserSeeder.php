@@ -1,5 +1,6 @@
 <?php
 
+use App\Publication;
 use Illuminate\Database\Seeder;
 
 class UserSeeder extends Seeder
@@ -11,6 +12,10 @@ class UserSeeder extends Seeder
      */
     public function run()
     {
-        factory(\App\User::class)->times(1)->create();
+        factory(\App\User::class)->times(3)->create()->each(function ($user) {
+            $user->publications()->saveMany( 
+                factory(Publication::class, rand(1, 20)
+            )->make());
+        });
     }
 }

@@ -15,6 +15,7 @@ use Illuminate\Support\Facades\Route;
 */
 
 Route::get('users', 'UserController@getUsers');
+Route::get('publications', 'PublicationController@getPublications');
 
 Route::middleware('auth:api')->get('/user', function (Request $request) {
     return $request->user();

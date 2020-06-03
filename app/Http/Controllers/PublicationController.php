@@ -3,18 +3,18 @@
 namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
-use App\Http\Data\UserRepository;
+use App\Http\Data\PublicationRepository;
 
-class UserController extends Controller
+class PublicationController extends Controller
 {
     private $repository;
 
-    public function __construct(UserRepository $userRepository)
+    public function __construct(PublicationRepository $userRepository)
     {
         $this->repository = $userRepository;
     }
 
-    public function getUsers(Request $request) 
+    public function getPublications(Request $request) 
     {
         try {
             $entity = $this->repository->all(
