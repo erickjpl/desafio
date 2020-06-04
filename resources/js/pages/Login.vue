@@ -51,16 +51,18 @@
             sendLogin: function (e) {
                 e.preventDefault()
 
+                if (this.form.email  && this.form.password) {
+                    this.fetchLogin(this.form)
+                    this.$router.push({ name: 'account' })
+                }
+
                 this.errors = []
 
                 if (!this.email) 
                     this.errors.push('El campo email es obligatorio.')
 
                 if (!this.password) 
-                    this.errors.push('El campo clave es obligatorio.')
-
-                if (this.form.email  && this.form.password)
-                    this.fetchLogin(this.form)
+                    this.errors.push('El campo clave es obligatorio.')                
             }
         }
     }

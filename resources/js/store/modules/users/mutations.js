@@ -1,11 +1,9 @@
 const mutations = {
-	LOGIN( state, data ) {
-        state.user = data.user
-        state.token = data.token
+	TOKEN( state, token ) {
+        state.token = token
     },
-	REGISTER( state, data ) {
-        state.user = data.user
-        state.token = data.token
+    LOGIN( state, data ) {
+        state.user = data
     },
 	ERRORS( state, errors ) {
         state.errors = errors

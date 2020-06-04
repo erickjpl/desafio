@@ -1,12 +1,12 @@
 const getters = {
-	getAllPublications(state) {
-		return state.publications;
+	getUser(state) {
+		return state.user
 	},
-	getPublication(state) {
-		return state.publication;
+	getToken(state) {
+		return state.token
 	},
-	getAllComments(state) {
-		return state.comments;
+	isLoggedIn(state) {
+		return ! state.token
 	}
 }
 

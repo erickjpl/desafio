@@ -45,6 +45,8 @@ class UserRepository
 
     public function create($input)
     {
+        $input['password'] = \Hash::make($input['password']);
+        
         \DB::transaction(function() use ($input) {
             
             $model = $this->model->newInstance($input);

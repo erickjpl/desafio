@@ -64,7 +64,7 @@ class LoginController extends Controller
     {
         $this->clearLoginAttempts($request);
 
-        return response()->json([ "data" => auth() ], 201)->header('Authorization', $token);
+        return response()->json([ "data" => \Auth::user()->toArray() ], 201)->header('Authorization', $token);
         return $this->sendResponse('Users retrieved successfully')->header('Authorization', $token);
     }
 

@@ -4,7 +4,10 @@ import Service from '@/services/config/Service'
 
 export default class ServiceFactory {
 
-    constructor(url) { this.url = url }
+    constructor(url) { 
+        this.url = url 
+        Service.defaults.headers.common['Authorization'] = `Bearer ${JSON.parse(localStorage.getItem('token'))}`
+    }
 
     getAll(q) {
         return Service.get( this.url, { params: q } )
