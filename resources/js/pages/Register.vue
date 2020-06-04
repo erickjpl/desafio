@@ -65,23 +65,24 @@
 
                 this.errors = []
 
-                if (!this.name) 
+                if (!this.form.name) 
                     this.errors.push('El campo nombre es obligatorio.')
 
-                if (!this.lastname) 
+                if (!this.form.lastname) 
                     this.errors.push('El campo apellido es obligatorio.')
 
-                if (!this.email) 
+                if (!this.form.email) 
                     this.errors.push('El campo email es obligatorio.')
 
-                if (!this.password) 
+                if (!this.form.password) 
                     this.errors.push('El campo clave es obligatorio.')
 
-                if (!this.password_confirmation && this.password_confirmation == this.password) 
+                if (!this.form.password_confirmation && this.password_confirmation == this.password) 
                     this.errors.push('La clave no coincide o esta vacía.')
 
                 if (this.form.name && this.form.lastname  && this.form.email  && this.form.password && this.form.password_confirmation) { 
                     this.fetchRegister(this.form)
+                        .then( () => this.$router.push({ name: 'login' }) )
                 }
             }
         }

@@ -1,4 +1,7 @@
 const getters = {
+	getAllPublicationsUser(state) {
+		return state.publications_user;
+	},
 	getAllPublications(state) {
 		return state.publications;
 	},

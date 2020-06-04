@@ -53,15 +53,16 @@
 
                 if (this.form.email  && this.form.password) {
                     this.fetchLogin(this.form)
-                    this.$router.push({ name: 'account' })
+                        .then( () => this.$router.push({ name: 'account' }) )
+                        .catch( () => '' )
                 }
 
                 this.errors = []
 
-                if (!this.email) 
+                if (!this.form.email) 
                     this.errors.push('El campo email es obligatorio.')
 
-                if (!this.password) 
+                if (!this.form.password) 
                     this.errors.push('El campo clave es obligatorio.')                
             }
         }

@@ -9,9 +9,9 @@ class PublicationController extends Controller
 {
     private $repository;
 
-    public function __construct(PublicationRepository $userRepository)
+    public function __construct(PublicationRepository $publicationRepository)
     {
-        $this->repository = $userRepository;
+        $this->repository = $publicationRepository;
     }
 
     public function getPublications(Request $request) 

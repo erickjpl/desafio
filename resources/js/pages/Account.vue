@@ -12,18 +12,16 @@
             </div>
 		</div>
 
-        <!--
-        <template v-for="(comment) in getAllComments">
-	        <div class="card border-info mb-3" :key="comment.id">
-			  	<div class="card-header">{{ comment.created_at }}</div>
+        <template v-for="(publication) in getAllPublicationsUser">
+	        <div class="card border-info mb-3" :key="publication.id">
+			  	<div class="card-header">{{ publication.title }}</div>
 
 			  	<div class="card-body text-info">
-			    	<p class="card-text">{{ comment.content }}</p>
+			    	<p class="card-text">{{ publication.content }}</p>
 			  	</div>
 			</div>
         </template>
-        <p class="text-center p-2" v-if="!getAllComments">La publicacion no tiene comentarios...</p>
-        -->
+        <p class="text-center p-2" v-if="!getAllPublicationsUser">No ha realizado ninguna publicación...</p>
     </div>
 </template>
 
@@ -32,13 +30,14 @@
 
     export default {
         created() {
-
+            this.fetchPublicationsUser( this.getUser.id )
         },
         computed: {
-            ...mapGetters('user', ['getUser'])
+            ...mapGetters('user', ['getUser']),
+            ...mapGetters('publication', ['getAllPublicationsUser'])
         },
         methods: {
-            
+            ...mapActions('publication', ['fetchPublicationsUser']),
         }
     }
 </script>

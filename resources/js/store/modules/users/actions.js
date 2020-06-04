@@ -13,7 +13,7 @@ const actions = {
     },
     async fetchRegister({commit}, q) {
         await AuthService.register(q)
-            .then( response => commit( 'REGISTER', response.data.data ))
+            .then( response => response.data.data )
             .catch( error   => commit( 'ERROR', error ))
     }
 }

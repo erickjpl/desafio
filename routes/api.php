@@ -19,11 +19,16 @@ Route::get('publications', 'PublicationController@getPublications');
 Route::get('publications/{publication}', 'PublicationController@getPublication');
 Route::get('comments', 'CommentController@getComments');
 
+Route::middleware(['auth:api'])->group(function () {
+    Route::post('comments', 'CommentController@addComment');
+	Route::get('publications/user/{users}', 'UserController@getPublicationUser');
+});
+
 Route::prefix('auth')->group(function () {
     Route::post('register', 'Auth\RegisterController@register');
     Route::post('login', 'Auth\LoginController@login');
 
-    Route::middleware(['auth:api','verified'])->group(function () {
+    Route::middleware(['auth:api'])->group(function () {
         Route::post('logout', 'Auth\LoginController@logout');
     });
 });

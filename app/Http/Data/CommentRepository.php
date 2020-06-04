@@ -44,11 +44,20 @@ class CommentRepository
 
     public function create($input)
     {
-        $model = $this->model->newInstance($input);
+        try {
+            $model = $this->model->newInstance($input);
 
-        $model->save();
+            \DB::transaction(function() use ($model) {
 
-        return $model;
+                $model->status = 'active';
+
+                $model->save();
+            });
+
+            return $this->transform($model, false);
+        } catch(\Exception $e) {
+            throw new \Exception($e->getMessage());
+        }
     }
 
     public function find($id, $relations = false, $columns = ['*'])
@@ -105,11 +114,9 @@ class CommentRepository
             $entity = new CommentEntity($query);
 
             if ($relations) 
-                    $entity->setPublication($value->publication);
+                    $entity->setPublication($query->publication);
 
             return $entity->toResponse();
         }
-
-        return $users;
     }
 }

@@ -1954,13 +1954,13 @@ function _defineProperty(obj, key, value) { if (key in obj) { Object.definePrope
 //
 //
 //
-//
-//
 
 /* harmony default export */ __webpack_exports__["default"] = ({
-  created: function created() {},
-  computed: _objectSpread({}, Object(vuex__WEBPACK_IMPORTED_MODULE_0__["mapGetters"])('user', ['getUser'])),
-  methods: {}
+  created: function created() {
+    this.fetchPublicationsUser(this.getUser.id);
+  },
+  computed: _objectSpread(_objectSpread({}, Object(vuex__WEBPACK_IMPORTED_MODULE_0__["mapGetters"])('user', ['getUser'])), Object(vuex__WEBPACK_IMPORTED_MODULE_0__["mapGetters"])('publication', ['getAllPublicationsUser'])),
+  methods: _objectSpread({}, Object(vuex__WEBPACK_IMPORTED_MODULE_0__["mapActions"])('publication', ['fetchPublicationsUser']))
 });
 
 /***/ }),
@@ -2126,18 +2126,23 @@ function _defineProperty(obj, key, value) { if (key in obj) { Object.definePrope
   },
   methods: _objectSpread(_objectSpread({}, Object(vuex__WEBPACK_IMPORTED_MODULE_0__["mapActions"])('user', ['fetchLogin'])), {}, {
     sendLogin: function sendLogin(e) {
+      var _this = this;
+
       e.preventDefault();
 
       if (this.form.email && this.form.password) {
-        this.fetchLogin(this.form);
-        this.$router.push({
-          name: 'account'
+        this.fetchLogin(this.form).then(function () {
+          return _this.$router.push({
+            name: 'account'
+          });
+        })["catch"](function () {
+          return '';
         });
       }
 
       this.errors = [];
-      if (!this.email) this.errors.push('El campo email es obligatorio.');
-      if (!this.password) this.errors.push('El campo clave es obligatorio.');
+      if (!this.form.email) this.errors.push('El campo email es obligatorio.');
+      if (!this.form.password) this.errors.push('El campo clave es obligatorio.');
     }
   })
 });
@@ -2187,13 +2192,50 @@ function _defineProperty(obj, key, value) { if (key in obj) { Object.definePrope
 //
 //
 //
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
 
 /* harmony default export */ __webpack_exports__["default"] = ({
+  data: function data() {
+    return {
+      form: {
+        publication_id: '',
+        content: ''
+      }
+    };
+  },
   created: function created() {
     this.fetchPublication(this.$route.params.publication);
   },
-  computed: _objectSpread({}, Object(vuex__WEBPACK_IMPORTED_MODULE_0__["mapGetters"])('publication', ['getPublication', 'getAllComments'])),
-  methods: _objectSpread({}, Object(vuex__WEBPACK_IMPORTED_MODULE_0__["mapActions"])('publication', ['fetchPublication']))
+  computed: _objectSpread(_objectSpread({}, Object(vuex__WEBPACK_IMPORTED_MODULE_0__["mapGetters"])('user', ['isLoggedIn'])), Object(vuex__WEBPACK_IMPORTED_MODULE_0__["mapGetters"])('publication', ['getPublication', 'getAllComments'])),
+  methods: _objectSpread(_objectSpread({}, Object(vuex__WEBPACK_IMPORTED_MODULE_0__["mapActions"])('publication', ['fetchPublication', 'fetchNewComment'])), {}, {
+    sendComment: function sendComment(e) {
+      e.preventDefault();
+      this.form.publication_id = this.$route.params.publication;
+
+      if (this.form.content) {
+        this.fetchNewComment(this.form).then(function (resp) {
+          return console.log('content', resp);
+        })["catch"](); // this.getAllComments.push({ name: 'account' })
+
+        return;
+      }
+    }
+  })
 });
 
 /***/ }),
@@ -2323,16 +2365,22 @@ function _defineProperty(obj, key, value) { if (key in obj) { Object.definePrope
   },
   methods: _objectSpread(_objectSpread({}, Object(vuex__WEBPACK_IMPORTED_MODULE_0__["mapActions"])('user', ['fetchRegister'])), {}, {
     sendRegister: function sendRegister(e) {
+      var _this = this;
+
       e.preventDefault();
       this.errors = [];
-      if (!this.name) this.errors.push('El campo nombre es obligatorio.');
-      if (!this.lastname) this.errors.push('El campo apellido es obligatorio.');
-      if (!this.email) this.errors.push('El campo email es obligatorio.');
-      if (!this.password) this.errors.push('El campo clave es obligatorio.');
-      if (!this.password_confirmation && this.password_confirmation == this.password) this.errors.push('La clave no coincide o esta vacía.');
+      if (!this.form.name) this.errors.push('El campo nombre es obligatorio.');
+      if (!this.form.lastname) this.errors.push('El campo apellido es obligatorio.');
+      if (!this.form.email) this.errors.push('El campo email es obligatorio.');
+      if (!this.form.password) this.errors.push('El campo clave es obligatorio.');
+      if (!this.form.password_confirmation && this.password_confirmation == this.password) this.errors.push('La clave no coincide o esta vacía.');
 
       if (this.form.name && this.form.lastname && this.form.email && this.form.password && this.form.password_confirmation) {
-        this.fetchRegister(this.form);
+        this.fetchRegister(this.form).then(function () {
+          return _this.$router.push({
+            name: 'login'
+          });
+        });
       }
     }
   })
@@ -38623,35 +38671,65 @@ var render = function() {
   var _vm = this
   var _h = _vm.$createElement
   var _c = _vm._self._c || _h
-  return _c("div", [
-    _c("div", { staticClass: "card text-white bg-info my-3" }, [
-      _c("div", { staticClass: "card-header" }, [
-        _vm._v(_vm._s(_vm.getUser.full_name))
+  return _c(
+    "div",
+    [
+      _c("div", { staticClass: "card text-white bg-info my-3" }, [
+        _c("div", { staticClass: "card-header" }, [
+          _vm._v(_vm._s(_vm.getUser.full_name))
+        ]),
+        _vm._v(" "),
+        _c("div", { staticClass: "card-body" }, [
+          _c("p", { staticClass: "card-text" }, [
+            _vm._v(_vm._s(_vm.getUser.email))
+          ])
+        ]),
+        _vm._v(" "),
+        _c(
+          "div",
+          { staticClass: "card-footer text-muted" },
+          [
+            _c(
+              "router-link",
+              {
+                staticClass: "dropdown-item text-center",
+                attrs: { to: { name: "index" } }
+              },
+              [_vm._v("Mis Publicaciones.")]
+            )
+          ],
+          1
+        )
       ]),
       _vm._v(" "),
-      _c("div", { staticClass: "card-body" }, [
-        _c("p", { staticClass: "card-text" }, [
-          _vm._v(_vm._s(_vm.getUser.email))
-        ])
-      ]),
-      _vm._v(" "),
-      _c(
-        "div",
-        { staticClass: "card-footer text-muted" },
-        [
+      _vm._l(_vm.getAllPublicationsUser, function(publication) {
+        return [
           _c(
-            "router-link",
-            {
-              staticClass: "dropdown-item text-center",
-              attrs: { to: { name: "index" } }
-            },
-            [_vm._v("Mis Publicaciones.")]
+            "div",
+            { key: publication.id, staticClass: "card border-info mb-3" },
+            [
+              _c("div", { staticClass: "card-header" }, [
+                _vm._v(_vm._s(publication.title))
+              ]),
+              _vm._v(" "),
+              _c("div", { staticClass: "card-body text-info" }, [
+                _c("p", { staticClass: "card-text" }, [
+                  _vm._v(_vm._s(publication.content))
+                ])
+              ])
+            ]
           )
-        ],
-        1
-      )
-    ])
-  ])
+        ]
+      }),
+      _vm._v(" "),
+      !_vm.getAllPublicationsUser
+        ? _c("p", { staticClass: "text-center p-2" }, [
+            _vm._v("No ha realizado ninguna publicación...")
+          ])
+        : _vm._e()
+    ],
+    2
+  )
 }
 var staticRenderFns = []
 render._withStripped = true
@@ -39031,6 +39109,38 @@ var render = function() {
         )
       ]),
       _vm._v(" "),
+      !_vm.isLoggedIn
+        ? [
+            _c("form", { on: { submit: _vm.sendComment } }, [
+              _c("div", { staticClass: "input-group mb-3" }, [
+                _vm._m(0),
+                _vm._v(" "),
+                _c("textarea", {
+                  directives: [
+                    {
+                      name: "model",
+                      rawName: "v-model",
+                      value: _vm.form.content,
+                      expression: "form.content"
+                    }
+                  ],
+                  staticClass: "form-control",
+                  attrs: { "aria-label": "Nuevo comentario" },
+                  domProps: { value: _vm.form.content },
+                  on: {
+                    input: function($event) {
+                      if ($event.target.composing) {
+                        return
+                      }
+                      _vm.$set(_vm.form, "content", $event.target.value)
+                    }
+                  }
+                })
+              ])
+            ])
+          ]
+        : _vm._e(),
+      _vm._v(" "),
       _vm._l(_vm.getAllComments, function(comment) {
         return [
           _c("div", { key: comment.id, staticClass: "card border-info mb-3" }, [
@@ -39056,7 +39166,26 @@ var render = function() {
     2
   )
 }
-var staticRenderFns = []
+var staticRenderFns = [
+  function() {
+    var _vm = this
+    var _h = _vm.$createElement
+    var _c = _vm._self._c || _h
+    return _c("div", { staticClass: "input-group-prepend" }, [
+      _c("div", { staticClass: "input-group-text" }, [
+        _c(
+          "button",
+          { staticClass: "btn btn-outline-primary", attrs: { type: "submit" } },
+          [
+            _vm._v(
+              "\n                                Nuevo comentario\n                            "
+            )
+          ]
+        )
+      ])
+    ])
+  }
+]
 render._withStripped = true
 
 
@@ -56281,6 +56410,23 @@ var AuthService = new _services_config_AuthFactory__WEBPACK_IMPORTED_MODULE_0__[
 
 /***/ }),
 
+/***/ "./resources/js/services/CommentService.js":
+/*!*************************************************!*\
+  !*** ./resources/js/services/CommentService.js ***!
+  \*************************************************/
+/*! exports provided: CommentService */
+/***/ (function(module, __webpack_exports__, __webpack_require__) {
+
+"use strict";
+__webpack_require__.r(__webpack_exports__);
+/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "CommentService", function() { return CommentService; });
+/* harmony import */ var _services_config_ServiceFactory__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! @/services/config/ServiceFactory */ "./resources/js/services/config/ServiceFactory.js");
+
+var API_URL = '/comments';
+var CommentService = new _services_config_ServiceFactory__WEBPACK_IMPORTED_MODULE_0__["default"](API_URL);
+
+/***/ }),
+
 /***/ "./resources/js/services/PublicationService.js":
 /*!*****************************************************!*\
   !*** ./resources/js/services/PublicationService.js ***!
@@ -56429,12 +56575,17 @@ var ServiceFactory = /*#__PURE__*/function () {
     _classCallCheck(this, ServiceFactory);
 
     this.url = url;
-    _services_config_Service__WEBPACK_IMPORTED_MODULE_0__["default"].defaults.headers.common['Authorization'] = "Bearer ".concat(JSON.parse(localStorage.getItem('token')));
   }
 
   _createClass(ServiceFactory, [{
+    key: "getHeaders",
+    value: function getHeaders() {
+      _services_config_Service__WEBPACK_IMPORTED_MODULE_0__["default"].defaults.headers.common['Authorization'] = "Bearer ".concat(JSON.parse(localStorage.getItem('token')));
+    }
+  }, {
     key: "getAll",
     value: function getAll(q) {
+      this.getHeaders();
       return _services_config_Service__WEBPACK_IMPORTED_MODULE_0__["default"].get(this.url, {
         params: q
       }).then(function (response) {
@@ -56446,6 +56597,7 @@ var ServiceFactory = /*#__PURE__*/function () {
   }, {
     key: "get",
     value: function get(id) {
+      this.getHeaders();
       return _services_config_Service__WEBPACK_IMPORTED_MODULE_0__["default"].get("".concat(this.url, "/").concat(id)).then(function (response) {
         return Promise.resolve(response);
       })["catch"](function (error) {
@@ -56455,6 +56607,7 @@ var ServiceFactory = /*#__PURE__*/function () {
   }, {
     key: "add",
     value: function add(data) {
+      this.getHeaders();
       return _services_config_Service__WEBPACK_IMPORTED_MODULE_0__["default"].post(this.url, data).then(function (response) {
         return Promise.resolve(response);
       })["catch"](function (error) {
@@ -56464,6 +56617,7 @@ var ServiceFactory = /*#__PURE__*/function () {
   }, {
     key: "update",
     value: function update(data) {
+      this.getHeaders();
       return _services_config_Service__WEBPACK_IMPORTED_MODULE_0__["default"].put("".concat(this.url, "/").concat(data.id), data).then(function (response) {
         return Promise.resolve(response);
       })["catch"](function (error) {
@@ -56473,6 +56627,7 @@ var ServiceFactory = /*#__PURE__*/function () {
   }, {
     key: "remove",
     value: function remove(id) {
+      this.getHeaders();
       return _services_config_Service__WEBPACK_IMPORTED_MODULE_0__["default"]["delete"]("".concat(this.url, "/").concat(id)).then(function (response) {
         return Promise.resolve(response);
       })["catch"](function (error) {
@@ -56532,11 +56687,13 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony import */ var _babel_runtime_regenerator__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! @babel/runtime/regenerator */ "./node_modules/@babel/runtime/regenerator/index.js");
 /* harmony import */ var _babel_runtime_regenerator__WEBPACK_IMPORTED_MODULE_0___default = /*#__PURE__*/__webpack_require__.n(_babel_runtime_regenerator__WEBPACK_IMPORTED_MODULE_0__);
 /* harmony import */ var _services_PublicationService__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! @/services/PublicationService */ "./resources/js/services/PublicationService.js");
+/* harmony import */ var _services_CommentService__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! @/services/CommentService */ "./resources/js/services/CommentService.js");
 
 
 function asyncGeneratorStep(gen, resolve, reject, _next, _throw, key, arg) { try { var info = gen[key](arg); var value = info.value; } catch (error) { reject(error); return; } if (info.done) { resolve(value); } else { Promise.resolve(value).then(_next, _throw); } }
 
 function _asyncToGenerator(fn) { return function () { var self = this, args = arguments; return new Promise(function (resolve, reject) { var gen = fn.apply(self, args); function _next(value) { asyncGeneratorStep(gen, resolve, reject, _next, _throw, "next", value); } function _throw(err) { asyncGeneratorStep(gen, resolve, reject, _next, _throw, "throw", err); } _next(undefined); }); }; }
+
 
 
 var actions = {
@@ -56578,8 +56735,7 @@ var actions = {
                 commit('GET_PUBLICATION', response.data.data);
                 commit('GET_ALL_COMMENTS', comments);
               })["catch"](function (error) {
-                commit('ERRORS', error);
-                console.log(error);
+                return commit('ERRORS', error);
               });
 
             case 3:
@@ -56588,6 +56744,52 @@ var actions = {
           }
         }
       }, _callee2);
+    }))();
+  },
+  fetchNewComment: function fetchNewComment(_ref3, q) {
+    return _asyncToGenerator( /*#__PURE__*/_babel_runtime_regenerator__WEBPACK_IMPORTED_MODULE_0___default.a.mark(function _callee3() {
+      var commit;
+      return _babel_runtime_regenerator__WEBPACK_IMPORTED_MODULE_0___default.a.wrap(function _callee3$(_context3) {
+        while (1) {
+          switch (_context3.prev = _context3.next) {
+            case 0:
+              commit = _ref3.commit;
+              _context3.next = 3;
+              return _services_CommentService__WEBPACK_IMPORTED_MODULE_2__["CommentService"].add(q).then(function (response) {
+                return commit('PUSH_COMMENT', response.data.data);
+              })["catch"](function (error) {
+                return commit('ERRORS', error);
+              });
+
+            case 3:
+            case "end":
+              return _context3.stop();
+          }
+        }
+      }, _callee3);
+    }))();
+  },
+  fetchPublicationsUser: function fetchPublicationsUser(_ref4, q) {
+    return _asyncToGenerator( /*#__PURE__*/_babel_runtime_regenerator__WEBPACK_IMPORTED_MODULE_0___default.a.mark(function _callee4() {
+      var commit;
+      return _babel_runtime_regenerator__WEBPACK_IMPORTED_MODULE_0___default.a.wrap(function _callee4$(_context4) {
+        while (1) {
+          switch (_context4.prev = _context4.next) {
+            case 0:
+              commit = _ref4.commit;
+              _context4.next = 3;
+              return _services_PublicationService__WEBPACK_IMPORTED_MODULE_1__["PublicationService"].get("user/".concat(q)).then(function (response) {
+                return commit('GET_PUBLICATION_USER', response.data.data);
+              })["catch"](function (error) {
+                return commit('ERRORS', error);
+              });
+
+            case 3:
+            case "end":
+              return _context4.stop();
+          }
+        }
+      }, _callee4);
     }))();
   }
 };
@@ -56605,6 +56807,9 @@ var actions = {
 "use strict";
 __webpack_require__.r(__webpack_exports__);
 var getters = {
+  getAllPublicationsUser: function getAllPublicationsUser(state) {
+    return state.publications_user;
+  },
   getAllPublications: function getAllPublications(state) {
     return state.publications;
   },
@@ -56656,6 +56861,9 @@ __webpack_require__.r(__webpack_exports__);
 "use strict";
 __webpack_require__.r(__webpack_exports__);
 var mutations = {
+  GET_PUBLICATION_USER: function GET_PUBLICATION_USER(state, publications) {
+    state.publications_user = publications;
+  },
   GET_ALL_PUBLICATIONS: function GET_ALL_PUBLICATIONS(state, publications) {
     state.publications = publications;
   },
@@ -56664,6 +56872,9 @@ var mutations = {
   },
   GET_ALL_COMMENTS: function GET_ALL_COMMENTS(state, comments) {
     state.comments = comments;
+  },
+  PUSH_COMMENT: function PUSH_COMMENT(state, comments) {
+    state.comments.push(comments);
   },
   ERRORS: function ERRORS(state, errors) {
     state.errors = errors;
@@ -56683,6 +56894,7 @@ var mutations = {
 "use strict";
 __webpack_require__.r(__webpack_exports__);
 var state = {
+  publications_user: [],
   publications: [],
   publication: {},
   comments: [],
@@ -56749,7 +56961,7 @@ var actions = {
               commit = _ref2.commit;
               _context2.next = 3;
               return _services_AuthService__WEBPACK_IMPORTED_MODULE_1__["AuthService"].register(q).then(function (response) {
-                return commit('REGISTER', response.data.data);
+                return response.data.data;
               })["catch"](function (error) {
                 return commit('ERROR', error);
               });

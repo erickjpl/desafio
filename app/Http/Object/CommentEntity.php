@@ -12,6 +12,7 @@ class CommentEntity
     private $content;
     private $status;
     private $publication_id;
+    private $created_at;
     private $relation_publication;
 
     public function __construct(Comment $comment)
@@ -19,6 +20,7 @@ class CommentEntity
         $this->id = $comment->id;
         $this->status = $comment->status;
         $this->content  = $comment->content;
+        $this->created_at  = $comment->created_at;
         $this->publication_id  = $comment->publication_id;
     }
 
@@ -42,6 +44,11 @@ class CommentEntity
         return $this->publication_id;
     }
 
+    public function getCreatedAt()
+    {
+        return $this->created_at;
+    }
+
     public function setPublication(Publication $publication) {
         $this->relation_publication = $publication;
     }
@@ -57,7 +64,8 @@ class CommentEntity
             'id'      => $this->getId(),
             'status'   => $this->getstatus(),
             'content' => $this->getContent(),
-            'publication_id' => $this->getPublicationId()
+            'publication_id' => $this->getPublicationId(),
+            'created_at' => $this->getCreatedAt()
         );
         
         if ( ! empty( $this->getPublication() ) )

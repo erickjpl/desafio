@@ -89,7 +89,9 @@ class PublicationRepository
 
     public function relations($query)
     {
-        return $query->with('comments');
+        return $query->with(['comments' => function ($query) {
+            $query->orderBy('created_at', 'desc');
+        }]);
     }
 
     public function transform($query, $relations)
