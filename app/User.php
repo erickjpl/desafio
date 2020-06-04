@@ -5,8 +5,9 @@ namespace App;
 use Illuminate\Contracts\Auth\MustVerifyEmail;
 use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\Notifiable;
+use Tymon\JWTAuth\Contracts\JWTSubject;
 
-class User extends Authenticatable
+class User extends Authenticatable implements JWTSubject
 {
     use Notifiable;
 
@@ -56,12 +57,12 @@ class User extends Authenticatable
     *
     * @return string
     */
-   public function getRouteKeyName()
-   {
-       return 'id';
-   }
+    public function getRouteKeyName()
+    {
+        return 'id';
+    }
 
-   /**
+    /**
      * The accessors to append to the model's array form.
      *
      * @var array
@@ -76,6 +77,16 @@ class User extends Authenticatable
     public function getFullNameAttribute()
     {
         return "$this->name $this->lastname";
+    }
+
+    public function getJWTIdentifier()
+    {
+        return $this->getKey();
+    }
+    
+    public function getJWTCustomClaims()
+    {
+        return [];
     }
     
     /**

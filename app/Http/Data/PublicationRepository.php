@@ -56,7 +56,10 @@ class PublicationRepository
         try {
             $query = $this->model->newQuery();
 
-            return $query->find($id, $columns);
+            if ($relations) 
+                $query = $this->relations($query);
+            
+            return $this->transform($query->find($id, $columns), $relations);
         } catch(\Exception $e) {
             throw $e;
         }
@@ -97,7 +100,7 @@ class PublicationRepository
                 $entity = new PublicationEntity($value);
 
                 if ($relations) 
-                    $entity->setPublications($value->comments);
+                    $entity->setComments($value->comments);
 
                 $users->push($entity->toResponse());
             }
@@ -105,7 +108,7 @@ class PublicationRepository
             $entity = new PublicationEntity($query);
 
             if ($relations) 
-                $entity->setPublications($value->comments);
+                $entity->setComments($query->comments);
                 
             return $entity->toResponse();
         }

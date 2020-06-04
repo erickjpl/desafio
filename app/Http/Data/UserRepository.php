@@ -45,11 +45,14 @@ class UserRepository
 
     public function create($input)
     {
-        $model = $this->model->newInstance($input);
+        \DB::transaction(function() use ($input) {
+            
+            $model = $this->model->newInstance($input);
 
-        $model->save();
+            $model->save();
 
-        return $model;
+            return $model;
+        });
     }
 
     public function find($id, $relations = false, $columns = ['*'])

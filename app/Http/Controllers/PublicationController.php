@@ -30,4 +30,20 @@ class PublicationController extends Controller
             throw new \App\Exceptions\CustomException($e->getMessage());
         }
     }
+
+    public function getPublication($id) 
+    {
+        try {
+            $entity = $this->repository->find($id, true);
+
+            if ( ! $entity )
+                return response()->json([ "data" => 'No data was obtained ..!' ], 201);
+            
+            return response()->json([ "data" => $entity ], 200);
+        } catch(\Exception $e) {
+            throw $e;
+            
+            throw new \App\Exceptions\CustomException($e->getMessage());
+        }
+    }
 }

@@ -7,6 +7,7 @@ use App\Http\Data\UserRepository;
 
 class UserController extends Controller
 {
+    /** @var  UserRepository */
     private $repository;
 
     public function __construct(UserRepository $userRepository)

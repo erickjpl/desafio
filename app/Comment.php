@@ -29,7 +29,8 @@ class Comment extends Model
         'id' => 'integer',
         'content' => 'string',
         'status' => 'string',
-        'publication_id' => 'integer'
+        'publication_id' => 'integer',
+        'created_at' => 'date:d-m-Y'
     ];
     
     /**
